@@ -7,6 +7,12 @@ create-cluster:
 create-namespace:
 	kubectl create namespace airflow
 
+install-airflow:
+	helm upgrade --install airflow apache-airflow/airflow -n airflow -f values.yml
+
+upgrade-airflow:
+	helm upgrade airflow apache-airflow/airflow -n airflow -f values.yml
+
 delete-cluster:
 	kind delete cluster --name ${CLUSTER_NAME}
 
