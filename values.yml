@@ -10,6 +10,6 @@ dags:
     # subpath within the repo where dags are located
     # should be "" if dags are at repo root
     subPath: "dags-config/"
-    wait: 60
+    wait: 20
     containerName: git-sync
     uid: 65533
