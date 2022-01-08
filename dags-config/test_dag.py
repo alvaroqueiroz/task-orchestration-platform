@@ -27,11 +27,14 @@ start = DummyOperator(task_id="run_this_first", dag=dag)
 passing = KubernetesPodOperator(
     namespace="airflow",
     image="python:3.9.9",
-    cmds=["python", "-c"],
-    arguments=["print('hello world')"],
+    cmds=["python3", "scripts/read_s3_file.py"],
+    arguments=[
+        "-f", "s3://task-orchestration-platform/files/consumer.csv.gz",
+        "-c", "gzip"
+    ],
     labels={"foo": "bar"},
-    name="passing-test",
-    task_id="passing-task",
+    name="read-s3-file",
+    task_id="read-s3-file",
     get_logs=True,
     dag=dag,
 )

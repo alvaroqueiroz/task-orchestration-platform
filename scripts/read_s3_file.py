@@ -29,13 +29,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process some integers.")
     parser.add_argument("-f", "--file-path", dest="file_path", type=str, help="S3 file URI")
-    parser.add_argument(
-        "-c",
-        "--compression",
-        dest="compression_type",
-        type=str,
-        help="Compression type. default=gzip",
-    )
+    parser.add_argument("-c", "--compression", dest="compression_type", type=str, help="Compression type. default=gzip")
 
     args = parser.parse_args()
     main(args)
