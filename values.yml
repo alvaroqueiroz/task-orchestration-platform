@@ -13,8 +13,3 @@ dags:
     wait: 20
     containerName: git-sync
     uid: 65533
-
-# logs:
-#   persistence:
-#     enabled: true
-#     size: 4Gi

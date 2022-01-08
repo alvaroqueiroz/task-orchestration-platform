@@ -26,8 +26,8 @@ start = DummyOperator(task_id="run_this_first", dag=dag)
 
 passing = KubernetesPodOperator(
     namespace="airflow",
-    image="Python:3.6",
-    cmds=["Python", "-c"],
+    image="python:3.9.9",
+    cmds=["python", "-c"],
     arguments=["print('hello world')"],
     labels={"foo": "bar"},
     name="passing-test",
@@ -36,17 +36,4 @@ passing = KubernetesPodOperator(
     dag=dag,
 )
 
-failing = KubernetesPodOperator(
-    namespace="airflow",
-    image="ubuntu:1604",
-    cmds=["Python", "-c"],
-    arguments=["print('hello world')"],
-    labels={"foo": "bar"},
-    name="fail",
-    task_id="failing-task",
-    get_logs=True,
-    dag=dag,
-)
-
 passing.set_upstream(start)
-failing.set_upstream(start)
