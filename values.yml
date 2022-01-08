@@ -13,3 +13,12 @@ dags:
     wait: 20
     containerName: git-sync
     uid: 65533
+
+extraEnvFrom: |
+  - configMapRef:
+      name: 'airflow-variables'
+
+logs:
+  persistence:
+    enabled: true
+    existingClaim: airflow-logs

@@ -7,6 +7,11 @@ create-cluster:
 create-namespace:
 	kubectl create namespace airflow
 
+apply-manifests:
+	kubectl apply -f variables.yml
+	kubectl apply -f pv.yml
+	kubectl apply -f pvc.yml
+
 install-airflow:
 	helm upgrade --install airflow apache-airflow/airflow -n airflow -f values.yml
 

@@ -1273,7 +1273,7 @@ registry:
 # Elasticsearch logging configuration
 elasticsearch:
   # Enable elasticsearch task logging
-  enabled: false
+  enabled: true
   # A secret containing the connection
   secretName: ~
   # Or an object representing the connection
@@ -1283,7 +1283,9 @@ elasticsearch:
   #   pass: ~
   #   host: ~
   #   port: ~
-  connection: {}
+  connection:
+    host: elasticsearch-master
+    port: 9200
 
 # All ports used by chart
 ports:
