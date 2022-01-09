@@ -44,7 +44,7 @@ download_file_task = KubernetesPodOperator(
     cmds=["python3", "./scripts/download_file.py"],
     arguments=[
         "--file-uri", "https://ifood-data-architect-test-source.s3-sa-east-1.amazonaws.com/consumer.csv.gz",
-        "--output-path", "/opt/airflow/files/consumer.csv.gz"
+        "--output-path", "/opt/airflow/data/consumer.csv.gz"
     ],
     labels={"foo": "bar"},
     name="download-file",
@@ -59,9 +59,9 @@ print_file_content_task = KubernetesPodOperator(
     namespace="airflow",
     image="localhost:5000/task-scripts",
     image_pull_policy='Always',
-    cmds=["python3", "./scripts/read_s3_file.py"],
+    cmds=["python3", "./scripts/print_records.py"],
     arguments=[
-        "--file-path", "/opt/airflow/files/consumer.csv.gz",
+        "--file-path", "/opt/airflow/data/consumer.csv.gz",
         "--compression", "gzip"
     ],
     labels={"foo": "bar"},
