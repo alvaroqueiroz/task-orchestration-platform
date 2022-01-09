@@ -4,16 +4,10 @@ from kubernetes.client import models as k8s
 from datetime import datetime, timedelta
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from airflow.operators.dummy_operator import DummyOperator
+from airflow.hooks.base_hook import BaseHook
 
 
-volume_mount = k8s.V1VolumeMount(
-    name='airflow-logs', mount_path='/opt/airflow', sub_path=None, read_only=True
-)
-
-volume = k8s.V1Volume(
-    name='airflow-logs',
-    persistent_volume_claim=k8s.V1PersistentVolumeClaimVolumeSource(claim_name='airflow-logs'),
-)
+AWS_CREDENTIALS = json.loads(BaseHook.get_connection('aws_default').get_extra())
 
 
 default_args = {
@@ -43,14 +37,18 @@ download_file_task = KubernetesPodOperator(
     image_pull_policy='Always',
     cmds=["python3", "./scripts/download_file.py"],
     arguments=[
-        "--file-uri", "https://ifood-data-architect-test-source.s3-sa-east-1.amazonaws.com/consumer.csv.gz",
-        "--output-path", "/opt/airflow/data/consumer.csv.gz"
+        "-f", "https://ifood-data-architect-test-source.s3-sa-east-1.amazonaws.com/consumer.csv.gz",
+        "-o", "s3://task-orchestration-platform",
+        "-n", "consumer.csv.gz"
     ],
+    env_vars={
+        'AWS_ACCESS_KEY_ID': AWS_CREDENTIALS.get('aws_access_key_id'),
+        'AWS_SECRET_ACCESS_KEY': AWS_CREDENTIALS.get('aws_secret_access_key'),
+        'AWS_DEFAULT_REGION': 'us-east-1'
+    },
     labels={"foo": "bar"},
     name="download-file",
     task_id="download-file",
-    volumes=[volume],
-    volume_mounts=[volume_mount],
     get_logs=True,
     dag=dag
 )
@@ -61,14 +59,17 @@ print_file_content_task = KubernetesPodOperator(
     image_pull_policy='Always',
     cmds=["python3", "./scripts/print_records.py"],
     arguments=[
-        "--file-path", "/opt/airflow/data/consumer.csv.gz",
+        "--file-path", "s3://task-orchestration-platform/consumer.csv.gz",
         "--compression", "gzip"
     ],
+    env_vars={
+        'AWS_ACCESS_KEY_ID': AWS_CREDENTIALS.get('aws_access_key_id'),
+        'AWS_SECRET_ACCESS_KEY': AWS_CREDENTIALS.get('aws_secret_access_key'),
+        'AWS_DEFAULT_REGION': 'us-east-1'
+    },
     labels={"foo": "bar"},
     name="print-records",
     task_id="print-records",
-    volumes=[volume],
-    volume_mounts=[volume_mount],
     get_logs=True,
     dag=dag,
 )

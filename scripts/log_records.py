@@ -1,6 +1,6 @@
-import pandas as pd
 import json
 import argparse
+import awswrangler as wr
 
 from utils.logger import get_std_logger
 
@@ -9,7 +9,7 @@ logger = get_std_logger()
 
 
 def read_file(file_path, compression_type="gzip"):
-    return pd.read_csv(file_path, compression=compression_type)
+    return wr.s3.read_csv(path=file_path, compression=compression_type)
 
 
 def print_records(json_file):
