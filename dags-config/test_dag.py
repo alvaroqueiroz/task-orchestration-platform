@@ -1,13 +1,19 @@
 import json
 from airflow import DAG
+from kubernetes.client import models as k8s
 from datetime import datetime, timedelta
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from airflow.operators.dummy_operator import DummyOperator
 
-from airflow.hooks.base_hook import BaseHook
 
+volume_mount = k8s.V1VolumeMount(
+    name='test-volume', mount_path='/opt/airflow', sub_path=None, read_only=True
+)
 
-AWS_CREDENTIALS = json.loads(BaseHook.get_connection('aws_default').get_extra())
+volume = k8s.V1Volume(
+    name='test-volume',
+    persistent_volume_claim=k8s.V1PersistentVolumeClaimVolumeSource(claim_name='test-volume'),
+)
 
 
 default_args = {
@@ -28,27 +34,45 @@ dag = DAG(
 )
 
 
-start = DummyOperator(task_id="run_this_first", dag=dag)
+start_task = DummyOperator(task_id="start_pipeline", dag=dag)
+done_task = DummyOperator(task_id="done_pipeline", dag=dag)
 
-passing = KubernetesPodOperator(
+download_file_task = KubernetesPodOperator(
+    namespace="airflow",
+    image="localhost:5000/task-scripts",
+    image_pull_policy='Always',
+    cmds=["python3", "./scripts/download_file.py"],
+    arguments=[
+        "--file-uri", "https://ifood-data-architect-test-source.s3-sa-east-1.amazonaws.com/consumer.csv.gz",
+        "--output-path", "/opt/airflow/files/consumer.csv.gz"
+    ],
+    labels={"foo": "bar"},
+    name="download-file",
+    task_id="download-file",
+    volumes=[volume],
+    volume_mounts=[volume_mount],
+    get_logs=True,
+    dag=dag
+)
+
+print_file_content_task = KubernetesPodOperator(
     namespace="airflow",
     image="localhost:5000/task-scripts",
     image_pull_policy='Always',
     cmds=["python3", "./scripts/read_s3_file.py"],
     arguments=[
-        "-f", "s3://task-orchestration-platform/files/consumer.csv.gz",
-        "-c", "gzip"
+        "--file-path", "/opt/airflow/files/consumer.csv.gz",
+        "--compression", "gzip"
     ],
-    env_vars={
-        'AWS_ACCESS_KEY_ID': AWS_CREDENTIALS.get('aws_access_key_id'),
-        'AWS_SECRET_ACCESS_KEY': AWS_CREDENTIALS.get('aws_secret_access_key'),
-        'AWS_DEFAULT_REGION': 'us-east-1'
-    },
     labels={"foo": "bar"},
     name="read-s3-file",
     task_id="read-s3-file",
+    volumes=[volume],
+    volume_mounts=[volume_mount],
     get_logs=True,
     dag=dag,
 )
 
-passing.set_upstream(start)
+start_task.set_downstream(download_file_task)
+download_file_task.set_downstream(print_file_content_task)
+print_file_content_task.set_downstream(done_task)
