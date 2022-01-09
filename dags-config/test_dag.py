@@ -26,7 +26,7 @@ start = DummyOperator(task_id="run_this_first", dag=dag)
 
 passing = KubernetesPodOperator(
     namespace="airflow",
-    image="task-scripts:latest",
+    image="localhost:5000/task-scripts",
     image_pull_policy='Always',
     cmds=["python3", "./scripts/read_s3_file.py"],
     arguments=[

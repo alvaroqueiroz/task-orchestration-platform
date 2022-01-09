@@ -5,6 +5,9 @@ DOCKER_IMAGE_NAME=task-scripts
 create-cluster:
 	kind create cluster --config=kind-cluster.yml --name ${CLUSTER_NAME}
 
+create-registry:
+	sh ./registry.sh
+
 create-namespace:
 	kubectl create namespace airflow
 
@@ -21,6 +24,7 @@ upgrade-airflow:
 
 docker-build:
 	docker build . -t ${DOCKER_IMAGE_NAME}
+	docker tag ${DOCKER_IMAGE_NAME}:latest localhost:5000/${DOCKER_IMAGE_NAME}:latest
 
 upload-image:
 	kind load docker-image ${DOCKER_IMAGE_NAME}:latest --name ${CLUSTER_NAME} 
@@ -31,12 +35,6 @@ proxy:
 delete-cluster:
 	kind delete cluster --name ${CLUSTER_NAME}
 
-up: 
-	create-cluster 
-	create-namespace 
-	apply-manifests 
-	install-airflow
-	docker-build
-	upload-image
+up: create-cluster create-registry create-namespace apply-manifests install-airflow docker-build upload-image
 
 down: delete-cluster
