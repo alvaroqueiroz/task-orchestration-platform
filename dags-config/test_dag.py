@@ -1,7 +1,13 @@
+import json
 from airflow import DAG
 from datetime import datetime, timedelta
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from airflow.operators.dummy_operator import DummyOperator
+
+from airflow.hooks.base_hook import BaseHook
+
+
+AWS_CREDENTIALS = json.loads(BaseHook.get_connection('aws_default').get_extra())
 
 
 default_args = {
@@ -33,6 +39,11 @@ passing = KubernetesPodOperator(
         "-f", "s3://task-orchestration-platform/files/consumer.csv.gz",
         "-c", "gzip"
     ],
+    env_vars={
+        'AWS_ACCESS_KEY_ID': AWS_CREDENTIALS.get('aws_access_key_id'),
+        'AWS_SECRET_ACCESS_KEY': AWS_CREDENTIALS.get('aws_secret_access_key'),
+        'AWS_DEFAULT_REGION': 'us-east-1'
+    }
     labels={"foo": "bar"},
     name="read-s3-file",
     task_id="read-s3-file",
