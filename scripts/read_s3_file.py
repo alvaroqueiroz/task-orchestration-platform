@@ -5,7 +5,6 @@ import awswrangler as wr
 
 from utils.logger import get_std_logger
 
-boto3.setup_default_session(profile_name="staging")
 
 logger = get_std_logger()
 

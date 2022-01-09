@@ -22,12 +22,10 @@ install-airflow:
 upgrade-airflow:
 	helm upgrade airflow apache-airflow/airflow -n airflow -f values.yml
 
-docker-build:
+docker-build-and-upload:
 	docker build . -t ${DOCKER_IMAGE_NAME}
 	docker tag ${DOCKER_IMAGE_NAME}:latest localhost:5000/${DOCKER_IMAGE_NAME}:latest
-
-upload-image:
-	kind load docker-image ${DOCKER_IMAGE_NAME}:latest --name ${CLUSTER_NAME} 
+	docker push localhost:5000/${DOCKER_IMAGE_NAME}:latest	
 
 proxy:
 	kubectl port-forward svc/airflow-webserver 8080:8080 -n airflow
@@ -35,6 +33,6 @@ proxy:
 delete-cluster:
 	kind delete cluster --name ${CLUSTER_NAME}
 
-up: create-cluster create-registry create-namespace apply-manifests install-airflow docker-build upload-image
+up: create-cluster create-registry create-namespace apply-manifests install-airflow docker-build-and-upload
 
 down: delete-cluster
