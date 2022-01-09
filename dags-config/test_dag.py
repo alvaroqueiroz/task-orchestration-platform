@@ -65,8 +65,8 @@ print_file_content_task = KubernetesPodOperator(
         "--compression", "gzip"
     ],
     labels={"foo": "bar"},
-    name="read-s3-file",
-    task_id="read-s3-file",
+    name="print-records",
+    task_id="print-records",
     volumes=[volume],
     volume_mounts=[volume_mount],
     get_logs=True,
