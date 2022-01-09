@@ -43,7 +43,7 @@ passing = KubernetesPodOperator(
         'AWS_ACCESS_KEY_ID': AWS_CREDENTIALS.get('aws_access_key_id'),
         'AWS_SECRET_ACCESS_KEY': AWS_CREDENTIALS.get('aws_secret_access_key'),
         'AWS_DEFAULT_REGION': 'us-east-1'
-    }
+    },
     labels={"foo": "bar"},
     name="read-s3-file",
     task_id="read-s3-file",
