@@ -27,7 +27,7 @@ start = DummyOperator(task_id="run_this_first", dag=dag)
 passing = KubernetesPodOperator(
     namespace="airflow",
     image="task-scripts:latest",
-    image_pull_policy='always',
+    image_pull_policy='Always',
     cmds=["python3", "./scripts/read_s3_file.py"],
     arguments=[
         "-f", "s3://task-orchestration-platform/files/consumer.csv.gz",
