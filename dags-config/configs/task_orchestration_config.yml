@@ -4,7 +4,7 @@ owner_email:
   - teste@test.com
 owner_name: test
 depends_on_past: false 
-start_on_startup: true
+is_paused_upon_creation: false
 files:
   - file_name: consumer.csv.gz
     file_uri: https://ifood-data-architect-test-source.s3-sa-east-1.amazonaws.com/consumer.csv.gz

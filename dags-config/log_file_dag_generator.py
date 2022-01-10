@@ -30,7 +30,7 @@ def create_dag(dag_config):
         dag_id=dag_config.get("dag_name"),
         default_args=default_args,
         schedule_interval=dag_config.get("schedule_interval"),
-        is_paused_upon_creation=dag_config.get("start_on_startup"),
+        is_paused_upon_creation=dag_config.get("is_paused_upon_creation"),
     )
 
     with dag:
