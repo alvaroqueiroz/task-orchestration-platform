@@ -3,6 +3,7 @@ CLUSTER_NAME=task-orchestration-platform
 DOCKER_IMAGE_NAME=tasks
 AWS_ACCESS_KEY=
 AWS_SECRET_ACCESS_KEY_ID=
+
 create-cluster:
 	kind create cluster --config=kind-cluster.yml --name ${CLUSTER_NAME}
 
@@ -37,6 +38,6 @@ proxy:
 delete-cluster:
 	kind delete cluster --name ${CLUSTER_NAME}
 
-up: create-cluster create-registry create-namespace apply-manifests install-airflow create-airflow-aws-connection docker-build-and-upload proxy
+up: create-cluster create-registry docker-build-and-upload create-namespace apply-manifests install-airflow create-airflow-aws-connection proxy
 
 down: delete-cluster
