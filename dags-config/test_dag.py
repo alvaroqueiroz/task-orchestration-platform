@@ -57,7 +57,7 @@ print_file_content_task = KubernetesPodOperator(
     namespace="airflow",
     image="localhost:5000/task-scripts",
     image_pull_policy='Always',
-    cmds=["python3", "./scripts/print_records.py"],
+    cmds=["python3", "./scripts/log_records.py"],
     arguments=[
         "--file-path", "s3://task-orchestration-platform/consumer.csv.gz",
         "--compression", "gzip"
