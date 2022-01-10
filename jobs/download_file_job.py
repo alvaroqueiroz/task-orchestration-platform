@@ -2,7 +2,7 @@ import argparse
 import requests
 import awswrangler as wr
 
-from .utils.logger import get_std_logger
+from utils.logger import get_std_logger
 
 
 logger = get_std_logger()

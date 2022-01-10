@@ -44,7 +44,7 @@ delete-cluster:
 up: create-cluster create-registry docker-build-and-upload create-namespace apply-manifests add-airflow-helm-repo install-airflow create-airflow-aws-connection proxy
 
 test:
-	coverage run --source=jobs -m pytest tests/jobs/*_test.py
+	PYTHONPATH=$(shell pwd)/jobs coverage run --source=jobs -m pytest tests/jobs/*_test.py
 	coverage html
 
 down: delete-cluster
