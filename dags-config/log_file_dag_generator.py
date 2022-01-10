@@ -1,7 +1,8 @@
 import os
+import yaml
 import json
 import glob
-import yamale
+
 
 from airflow import DAG
 from datetime import datetime, timedelta
@@ -93,6 +94,12 @@ def create_dag(dag_config):
     return dag_config.get("dag_name")
 
 
+def read_yaml(filename_path: str):
+    with open(filename_path) as _file:
+        pipeline_config = yaml.load(_file, Loader=yaml.FullLoader)
+    return pipeline_config
+
+
 config_files = list(
     glob.iglob(
         os.path.dirname(os.path.abspath(__file__)) + "/configs/*.yml", recursive=True
@@ -100,7 +107,6 @@ config_files = list(
 )
 
 for config_path in config_files:
-    data = yamale.make_data(config_path)
-    for config in data:
-        dag_id = config[0].get("dag_name")
-        globals()[dag_id] = create_dag(config)
+    config = read_yaml(config_path)
+    dag_id = config.get("dag_name")
+    globals()[dag_id] = create_dag(config)
