@@ -91,7 +91,7 @@ def create_dag(dag_config):
             download_file_task.set_downstream(print_file_content_task)
             print_file_content_task.set_downstream(done_task)
 
-    return dag_config.get("dag_name")
+    return dag
 
 
 def read_yaml(filename_path: str):
