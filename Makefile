@@ -16,6 +16,9 @@ create-namespace:
 apply-manifests:
 	kubectl apply -f manifests/
 
+add-airflow-helm-repo:
+	helm repo add apache-airflow https://airflow.apache.org
+
 install-airflow:
 	helm upgrade --install airflow apache-airflow/airflow -n airflow -f values.yml
 
@@ -38,6 +41,10 @@ proxy:
 delete-cluster:
 	kind delete cluster --name ${CLUSTER_NAME}
 
-up: create-cluster create-registry docker-build-and-upload create-namespace apply-manifests install-airflow create-airflow-aws-connection proxy
+up: create-cluster create-registry docker-build-and-upload create-namespace apply-manifests add-airflow-helm-repo install-airflow create-airflow-aws-connection proxy
+
+test:
+	coverage run --source=jobs -m pytest tests/jobs/*_test.py
+	coverage html
 
 down: delete-cluster

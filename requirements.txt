@@ -1,2 +1,3 @@
 awswrangler
-yamale
+coverage
+pytest

@@ -42,7 +42,7 @@ def create_dag(dag_config):
                 namespace="airflow",
                 image=JOB_IMAGE_NAME,
                 image_pull_policy="Always",
-                cmds=["python3", "./jobs/download_file.py"],
+                cmds=["python3", "./jobs/download_file_job.py"],
                 arguments=[
                     "--file-uri", file_task.get("file_uri"),
                     "--output-path", file_task.get("s3_output_bucket"), 
@@ -64,7 +64,7 @@ def create_dag(dag_config):
                 namespace="airflow",
                 image=JOB_IMAGE_NAME,
                 image_pull_policy="Always",
-                cmds=["python3", "./jobs/log_records.py"],
+                cmds=["python3", "./jobs/log_records_job.py"],
                 arguments=[
                     "--file-path", f"{file_task.get('s3_output_bucket')}/{file_task.get('file_name')}",
                     "--compression", file_task.get("compression_type"),

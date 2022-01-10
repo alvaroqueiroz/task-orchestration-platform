@@ -1,4 +1,4 @@
-https://marclamberti.com/blog/airflow-on-kubernetes-get-started-in-10-mins
+# Task Orchestration Platform
 
 ## Requirementes
 
@@ -25,3 +25,14 @@ You need a AWS IAM user with following policy attached:
 }
 ```
 You have to replace `BUCKET_NAME` with your bucket name.
+
+- docker
+- kind
+- kubectl configurado
+- helm
+- s3 bucket
+- preencher Makefile com as credenciais
+- ajustar configs no yaml
+
+## References
+- https://marclamberti.com/blog/airflow-on-kubernetes-get-started-in-10-mins
