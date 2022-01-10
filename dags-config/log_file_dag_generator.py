@@ -37,8 +37,7 @@ def create_dag(dag_config):
         start_task = DummyOperator(task_id="start_pipeline", dag=dag)
         done_task = DummyOperator(task_id="done_pipeline", dag=dag)
 
-        for file_tasks in dag_config.get("files"):
-
+        for file_task in dag_config.get("files"):
             download_file_task = KubernetesPodOperator(
                 namespace="airflow",
                 image=JOB_IMAGE_NAME,
@@ -46,11 +45,11 @@ def create_dag(dag_config):
                 cmds=["python3", "./jobs/download_file.py"],
                 arguments=[
                     "--file-uri",
-                    file_tasks.get("file_uri"),
+                    file_task.get("file_uri"),
                     "--output-path",
-                    file_tasks.get("s3_output_path"),
+                    file_task.get("s3_output_path"),
                     "--file-name",
-                    file_tasks.get("file_name"),
+                    file_task.get("file_name"),
                 ],
                 env_vars={
                     "AWS_ACCESS_KEY_ID": AWS_CREDENTIALS.get("aws_access_key_id"),
@@ -59,8 +58,8 @@ def create_dag(dag_config):
                     ),
                     "AWS_DEFAULT_REGION": "us-east-1",
                 },
-                name="download-file",
-                task_id="download-file",
+                name=f"download_file_{file_task.get('file_name')}",
+                task_id=f"download_file_{file_task.get('file_name')}",
                 get_logs=True,
             )
 
@@ -70,10 +69,8 @@ def create_dag(dag_config):
                 image_pull_policy="Always",
                 cmds=["python3", "./jobs/log_records.py"],
                 arguments=[
-                    "--file-path",
-                    f"{file_tasks.get('s3_output_path')}/{file_tasks.get('file_name')}",
-                    "--compression",
-                    file_tasks.get("compression_type"),
+                    "--file-path", f"{file_task.get('s3_output_path')}/{file_task.get('file_name')}",
+                    "--compression", file_task.get("compression_type"),
                 ],
                 env_vars={
                     "AWS_ACCESS_KEY_ID": AWS_CREDENTIALS.get("aws_access_key_id"),
@@ -82,8 +79,8 @@ def create_dag(dag_config):
                     ),
                     "AWS_DEFAULT_REGION": "us-east-1",
                 },
-                name="log-records",
-                task_id="log-records",
+                name=f"log_records_{file_task.get('file_name')}",
+                task_id=f"log_records_{file_task.get('file_name')}",
                 get_logs=True,
             )
 
