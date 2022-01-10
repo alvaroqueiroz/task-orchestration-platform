@@ -1,22 +1,19 @@
 .SILENT:
 CLUSTER_NAME=task-orchestration-platform
-DOCKER_IMAGE_NAME=task-scripts
+DOCKER_IMAGE_NAME=tasks
 AWS_ACCESS_KEY=
 AWS_SECRET_ACCESS_KEY_ID=
-
 create-cluster:
 	kind create cluster --config=kind-cluster.yml --name ${CLUSTER_NAME}
 
 create-registry:
-	sh ./registry.sh
+	sh ./scripts/docker-local-registry.sh
 
 create-namespace:
 	kubectl create namespace airflow
 
 apply-manifests:
-	kubectl apply -f variables.yml -n airflow
-	kubectl apply -f pv.yml -n airflow
-	kubectl apply -f pvc.yml -n airflow
+	kubectl apply -f manifests/
 
 install-airflow:
 	helm upgrade --install airflow apache-airflow/airflow -n airflow -f values.yml
@@ -40,6 +37,6 @@ proxy:
 delete-cluster:
 	kind delete cluster --name ${CLUSTER_NAME}
 
-up: create-cluster create-registry create-namespace apply-manifests install-airflow docker-build-and-upload
+up: create-cluster create-registry create-namespace apply-manifests install-airflow create-airflow-aws-connection docker-build-and-upload proxy
 
 down: delete-cluster

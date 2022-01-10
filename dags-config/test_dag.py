@@ -18,13 +18,14 @@ default_args = {
     "email_on_failure": False,
     "email_on_retry": False,
     "retries": 1,
-    "retry_delay": timedelta(minutes=5),
+    "retry_delay": timedelta(minutes=5)
 }
 
 dag = DAG(
     "kubernetes_sample",
     default_args=default_args,
     schedule_interval=timedelta(minutes=10),
+    is_paused_upon_creation=False
 )
 
 
@@ -33,9 +34,9 @@ done_task = DummyOperator(task_id="done_pipeline", dag=dag)
 
 download_file_task = KubernetesPodOperator(
     namespace="airflow",
-    image="localhost:5000/task-scripts",
+    image="localhost:5000/tasks:latest",
     image_pull_policy='Always',
-    cmds=["python3", "./scripts/download_file.py"],
+    cmds=["python3", "./jobs/download_file.py"],
     arguments=[
         "-f", "https://ifood-data-architect-test-source.s3-sa-east-1.amazonaws.com/consumer.csv.gz",
         "-o", "s3://task-orchestration-platform",
@@ -55,9 +56,9 @@ download_file_task = KubernetesPodOperator(
 
 print_file_content_task = KubernetesPodOperator(
     namespace="airflow",
-    image="localhost:5000/task-scripts",
+    image="localhost:5000/tasks:latest",
     image_pull_policy='Always',
-    cmds=["python3", "./scripts/log_records.py"],
+    cmds=["python3", "./jobs/log_records.py"],
     arguments=[
         "--file-path", "s3://task-orchestration-platform/consumer.csv.gz",
         "--compression", "gzip"
