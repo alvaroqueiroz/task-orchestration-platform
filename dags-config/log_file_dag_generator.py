@@ -66,7 +66,7 @@ def create_dag(dag_config):
                 image_pull_policy="Always",
                 cmds=["python3", "./jobs/log_records.py"],
                 arguments=[
-                    "--file-path", f"{file_task.get('s3_output_path')}/{file_task.get('file_name')}",
+                    "--file-path", f"{file_task.get('s3_output_bucket')}/{file_task.get('file_name')}",
                     "--compression", file_task.get("compression_type"),
                 ],
                 env_vars={
