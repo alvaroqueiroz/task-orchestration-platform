@@ -44,12 +44,9 @@ def create_dag(dag_config):
                 image_pull_policy="Always",
                 cmds=["python3", "./jobs/download_file.py"],
                 arguments=[
-                    "--file-uri",
-                    file_task.get("file_uri"),
-                    "--output-path",
-                    file_task.get("s3_output_path"),
-                    "--file-name",
-                    file_task.get("file_name"),
+                    "--file-uri", file_task.get("file_uri"),
+                    "--output-path", file_task.get("s3_output_bucket"), 
+                    "--file-name", file_task.get("file_name"),
                 ],
                 env_vars={
                     "AWS_ACCESS_KEY_ID": AWS_CREDENTIALS.get("aws_access_key_id"),
