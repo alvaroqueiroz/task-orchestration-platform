@@ -5,7 +5,7 @@ This project aims to create a easy-to-run platform build upon some technoliges a
 - [Airflow](https://airflow.apache.org/)
 
 ## Objective
-Create a platform which will provision a Kubernetes cluster using Kind and provision Airflow with a DAG to download file and print records from this file.
+Create a platform which will provision a Kubernetes cluster using Kind and Airflow with a DAG to download file and print records.
 
 ## Getting started
 
@@ -51,14 +51,10 @@ After this requirements are completed you have to configure your dag.
 
 This platform uses a self-service engine which configure your dag based on a Yaml config file.
 This DAG have two tasks which are:
-- download_file
+- `download_file`
     - This task will download a file based on URI, write file to a /tmp folder and upload to s3 bucket that you have configured early
-- log_records
+- `log_records`
     - This task will download previous file from s3 bucket to a pandas Dataframe using `awswrangler`, parse Dataframe to json and print each json line.
-
-### Airflow Executor
-- Kubernetes Executor
-- KubernetesPodOperator
 
 ### Yaml config
 The yaml config file are located on `dags/configs` and has the following schema:
@@ -112,6 +108,8 @@ At the end of command `make up` a proxy will be created to access airflow from b
 
 ![dag](images/dag.png)
 
+| This project use `KubernetesExecutor` and `KuebernetesPodOperator`
+
 To destroy the environment simply run:
 ```bash
 make down
@@ -122,6 +120,8 @@ There are some tests to validate scripts in `scripts` folder. Please run:
 ```bash
 make test
 ```
+
+To access coverage report, please open the file located at: `htmlcov/index.html`
 
 ## References
 - [Airflow On Kubernetes in 10 mins - Marc Lamberti](https://marclamberti.com/blog/airflow-on-kubernetes-get-started-in-10-mins)
