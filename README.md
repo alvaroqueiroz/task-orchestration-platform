@@ -17,7 +17,7 @@ At first we need some requirements to build our task orchestration platform.
 - kind installed
 - kubectl configured
 - helm
-- AWS Credentials with access to an s3 bucket with following policy:
+- AWS Credentials with access to a s3 bucket with following policy:
     ```json
     {
         "Id": "Policy1",
