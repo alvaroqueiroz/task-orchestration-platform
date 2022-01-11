@@ -56,6 +56,10 @@ This DAG have two tasks which are:
 - log_records
     - This task will download previous file from s3 bucket to a pandas Dataframe using `awswrangler`, parse Dataframe to json and print each json line.
 
+### Airflow Executor
+- Kubernetes Executor
+- KubernetesPodOperator
+
 ### Yaml config
 The yaml config file are located on `dags/configs` and has the following schema:
 ```yaml
@@ -75,6 +79,49 @@ files:
 
 The dag generator will create each dag for config file based on values.
 
+### Running
+
+Config file for the challenge dag:
+```yaml
+dag_name: task_orchestration
+schedule_interval: '@daily'
+owner_email:
+  - teste@test.com
+owner_name: test
+depends_on_past: false 
+is_paused_upon_creation: false
+files:
+  - file_name: consumer.csv.gz
+    file_uri: https://ifood-data-architect-test-source.s3-sa-east-1.amazonaws.com/consumer.csv.gz
+    s3_output_bucket: s3://task-orchestration-platform
+    compression_type: gzip
+```
+
+After all these requirements, only thin you have to do is run:
+```bash
+make up
+```
+
+This command will provision all components required to run the platform, which are:
+- Kind K8s Cluster
+- Docker image registry running in docker
+- Airflow 2.0
+- A DAG with previous config file
+
+At the end of command `make up` a proxy will be created to access airflow from browser in [http://localhost:8080](http://localhost:8080)
+
+![dag](images/dag.png)
+
+To destroy the environment simply run:
+```bash
+make down
+```
+
+## Tests
+There are some tests to validate scripts in `scripts` folder. Please run:
+```bash
+make test
+```
 
 ## References
-- https://marclamberti.com/blog/airflow-on-kubernetes-get-started-in-10-mins
+- [Airflow On Kubernetes in 10 mins - Marc Lamberti](https://marclamberti.com/blog/airflow-on-kubernetes-get-started-in-10-mins)
