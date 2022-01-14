@@ -8,5 +8,5 @@ is_paused_upon_creation: false
 files:
   - file_name: consumer.csv.gz
     file_uri: https://ifood-data-architect-test-source.s3-sa-east-1.amazonaws.com/consumer.csv.gz
-    s3_output_bucket: s3://task-orchestration-platform
+    s3_output_bucket: s3://task-orchestration-platform-temp
     compression_type: gzip
