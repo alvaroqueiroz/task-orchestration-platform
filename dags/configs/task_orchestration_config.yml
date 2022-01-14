@@ -8,5 +8,5 @@ is_paused_upon_creation: false
 files:
   - file_name: consumer.csv.gz
     file_uri: https://ifood-data-architect-test-source.s3-sa-east-1.amazonaws.com/consumer.csv.gz
-    s3_output_bucket: s3://aws-logs-670806723132-sa-east-1
+    s3_output_bucket: s3://path-to-bucket
     compression_type: gzip
